@@ -6,6 +6,7 @@ import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Login from '../../components/login'
 import faker from 'faker'
+import { build, perBuild } from '@jackfranklin/test-data-bot'
 
 test('submitting the form calls onSubmit with username and password', async () => {
   // 🐨 create a variable called "submittedData" and a handleSubmit function that
@@ -21,24 +22,26 @@ test('submitting the form calls onSubmit with username and password', async () =
   const usernameField = screen.getByLabelText('Username');
   const passwordField = screen.getByLabelText('Password');
 
-  function buildLoginForm(args) {
-    args = args || {};
-    const username = args.username || faker.internet.userName();
-    const password = args.password || faker.internet.password();
-    return {username, password}
-  };
+  const buildLoginForm = build({
+    fields: {
+      username: perBuild(() => faker.internet.userName()),
+      password: perBuild(() => faker.internet.password())
+    }
+  });
   
-  const {username, password} = buildLoginForm({username: 'abc'});
+  // const {username, password} = buildLoginForm();
+  const {username, password} = buildLoginForm({
+    overrides: {
+      username: 'abc'
+    }
+  })
   await userEvent.type(usernameField, username);
   await userEvent.type(passwordField, password);
   // 🐨 click on the button with the text "Submit"
   await userEvent.click(screen.getByRole('button', {name: 'Submit'}));
   // assert that submittedData is correct
   // 💰 use `toEqual` from Jest: 📜 https://jestjs.io/docs/en/expect#toequalvalue
-  // expect(submittedData.username).toEqual(usernameField.value);
-  // expect(submittedData.password).toEqual(passwordField.value);
   expect(handleSubmit).toHaveBeenCalledWith({username, password});
-  expect(username).toEqual('abc');
 })
 
 /*
