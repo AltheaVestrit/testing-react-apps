@@ -48,3 +48,37 @@ test(`logging in displays the user's username`, async () => {
   // 🐨 assert that the username is on the screen
   expect(await screen.findByText(username)).toBeInTheDocument();
 })
+
+test('logging in without a password displays an error message', async () => {
+  render(<Login />)
+
+  const {username, password} = buildLoginForm()
+  await userEvent.type(screen.getByLabelText(/username/i), username)
+  await userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  await waitForElementToBeRemoved(() => screen.queryByLabelText(/loading/i));
+
+  expect(await screen.findByText('password required')).toBeInTheDocument();
+})
+
+test('logging in without a username displays an error message', async () => {
+  render(<Login />)
+
+  const {username, password} = buildLoginForm()
+  await userEvent.type(screen.getByLabelText(/password/i), password)
+  await userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  await waitForElementToBeRemoved(() => screen.queryByLabelText(/loading/i));
+
+  expect(await screen.findByText('username required')).toBeInTheDocument();
+})
+
+test('logging in without password and username displays an error message', async () => {
+  render(<Login />)
+
+  await userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  await waitForElementToBeRemoved(() => screen.queryByLabelText(/loading/i));
+
+  expect(await screen.findByText('password required')).toBeInTheDocument();
+})
