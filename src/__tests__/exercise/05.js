@@ -22,11 +22,14 @@ const buildLoginForm = build({
 
 // 🐨 get the server setup with an async function to handle the login POST request:
 // 💰 here's something to get you started
-handlers.forEach(handler => {
-  const server = setupServer(handler);
-  beforeAll(() => server.listen());
-  afterAll(() => server.close());
-})
+// handlers.forEach(handler => {
+//   const server = setupServer(handler);
+//   beforeAll(() => server.listen());
+//   afterAll(() => server.close());
+// })
+const server = setupServer(...handlers);
+beforeAll(() => server.listen());
+afterAll(() => server.close());
 
 test(`logging in displays the user's username`, async () => {
   render(<Login />)
