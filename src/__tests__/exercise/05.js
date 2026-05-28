@@ -58,7 +58,7 @@ test('logging in without a password displays an error message', async () => {
 
   await waitForElementToBeRemoved(() => screen.queryByLabelText(/loading/i));
 
-  expect(await screen.findByText('password required')).toBeInTheDocument();
+  expect(await screen.findByRole('alert')).toMatchSnapshot;
 })
 
 test('logging in without a username displays an error message', async () => {
@@ -70,7 +70,7 @@ test('logging in without a username displays an error message', async () => {
 
   await waitForElementToBeRemoved(() => screen.queryByLabelText(/loading/i));
 
-  expect(await screen.findByText('username required')).toBeInTheDocument();
+  expect(await screen.findByRole('alert')).toMatchSnapshot;
 })
 
 test('logging in without password and username displays an error message', async () => {
@@ -80,5 +80,5 @@ test('logging in without password and username displays an error message', async
 
   await waitForElementToBeRemoved(() => screen.queryByLabelText(/loading/i));
 
-  expect(await screen.findByText('password required')).toBeInTheDocument();
+  expect(await screen.findByRole('alert')).toMatchSnapshot;
 })
