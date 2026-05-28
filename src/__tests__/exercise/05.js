@@ -4,6 +4,7 @@
 import * as React from 'react'
 // 🐨 you'll need to grab waitForElementToBeRemoved from '@testing-library/react'
 import {render, screen, waitForElementToBeRemoved} from '@testing-library/react'
+import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import {build, fake} from '@jackfranklin/test-data-bot'
 // 🐨 you'll need to import rest from 'msw' and setupServer from msw/node
@@ -24,7 +25,9 @@ const server = setupServer(
   rest.post(
     'https://auth-provider.example.com/api/login',
     async (req, res, ctx) => {
-      return res(ctx.json({username}))
+      console.log('MSW handler hit')
+      const { username } = req.body;
+      return res(ctx.json({username}));
     },
   )
 )
@@ -50,10 +53,10 @@ test(`logging in displays the user's username`, async () => {
   // spinner has an aria-label of "loading" for accessibility purposes, so
   // 🐨 wait for the loading spinner to be removed using waitForElementToBeRemoved
   // 📜 https://testing-library.com/docs/dom-testing-library/api-async#waitforelementtoberemoved
-  waitForElementToBeRemoved(screen.getByRole('generic', {name: /loading*/i}));
+  await waitForElementToBeRemoved(() => screen.queryByLabelText(/loading/i));
 
   // once the login is successful, then the loading spinner disappears and
   // we render the username.
   // 🐨 assert that the username is on the screen
-  // expect()
+  expect(await screen.findByText(username)).toBeInTheDocument();
 })
